@@ -96,8 +96,8 @@ def run_webvoyager(input_dir):
         sys.executable,              # equivalent to "python"
         "-u", "webvoyager/run.py",   # keep Windows backslash
         "--test_file", str(input_dir / "tasks_test_with_answer.jsonl"),
-        "--api_key", "sk-mah6FUel7jrB3lNj8c3cnqUGeKy1ovL5DAD1GFge92C7Fe864c8646B1B9DaB6C20a10A896",
-        "--api_model", "/mnt/cache/sharemath/models/Qwen/Qwen2.5-VL-32B-Instruct",
+        "--api_key", "token123",
+        "--api_model", "Qwen/Qwen2.5-VL-32B-Instruct",
         "--headless",
         "--max_iter", "15",
         "--max_attached_imgs", "3",
