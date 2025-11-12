@@ -9,3 +9,16 @@ wandb
 
 outputs
 gather_statistics
+
+*.xlsx
+*.log
+realdev/
+ex_table_old/
+Bootstrap/
+
+webvoyager/realdev_res/
+webvoyager/realdev_res_add/
+webvoyager/webvoyager_claude_feature/
+webvoyager/webvoyager_claude_testcase/
+webvoyager/webvoyager_qwen_feature/
+webvoyager/webvoyager_qwen_testcase/

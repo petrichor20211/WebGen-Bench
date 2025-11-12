@@ -290,13 +290,11 @@ def exec_action_scroll(info, web_eles, driver_task, args, obs_info):
 # Prompt shown when max iterations reached
 ui_limit_prompt_template = (
     "You have reached the maximum number of allowed interactions with the website.\n\n"
-    "Please evaluate the outcome of your attempts based on the expected result:\n\n"
-    "Expected Result: {expected_result}\n\n"
-    "Now, answer with one of the following:\n"
-    "- YES: if the expected result was fully achieved during your interactions.\n"
-    "- NO: if the expected result was not achieved at all.\n"
-    "- PARTIAL: if the expected result was only partially achieved.\n\n"
-    "Provide your final answer based on your testing experience."
+    "Based on your test interactions, evaluate the following test case:\n\n"
+    "{ques}\n\n"
+    "Answer with YES or NO:\n"
+    "- YES: if you successfully completed the test and verified the expected behavior\n"
+    "- NO: if you could not complete the test or the behavior was incorrect"
 )
 
 
@@ -317,7 +315,12 @@ def run_single_task(task: Dict[str, Any], args_dict: Dict[str, Any]):
     logging.info("########## TASK%s ##########", task["id"])
 
     # Per‑process OpenAI client
-    client = OpenAI(api_key=args.api_key, base_url="http://PI_ADDRESS:PORT/v1")
+    # Choose API endpoint based on model name
+    if "qwen" in args.api_model.lower():
+        base_url = "https://openrouter.ai/api/v1"
+    else:  # For GPT models
+        base_url = "https://oneapi.deepwisdom.ai/v1/"
+    client = OpenAI(api_key=args.api_key, base_url=base_url)
 
     options = driver_config(args)
     driver_task = webdriver.Chrome(options=options)
@@ -378,9 +381,10 @@ def run_single_task(task: Dict[str, Any], args_dict: Dict[str, Any]):
         it += 1
 
         if it == args.max_iter:
+            expected_result = task.get("expected_result", "No expected result provided")
             curr_msg = {
                 "role": "user",
-                "content": ui_limit_prompt_template.format(expected_result=task["expected_result"]),
+                "content": ui_limit_prompt_template.format(ques=task['ques']),
             }
             messages.append(curr_msg)
         elif not fail_obs:
@@ -617,6 +621,7 @@ def main():
                 print(f"Task {task['id']} completed successfully.")
             except Exception as exc:
                 print(f"Task {task['id']} generated an exception: {exc}")
+            # future.result()
 
 
 if __name__ == "__main__":
